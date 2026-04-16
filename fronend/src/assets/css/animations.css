@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════
+   PRECISION ENGINEERING – Animations
+   ═══════════════════════════════════════════════════════ */
+
+/* Pulsing mint glow on borders / outlines */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 8px rgba(0, 242, 148, 0.1), inset 0 0 8px rgba(0, 242, 148, 0.05);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 242, 148, 0.25), inset 0 0 10px rgba(0, 242, 148, 0.08);
+    }
+}
+
+/* Entrance animation – float in from below */
+@keyframes float-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subtle background shimmer across cards */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Fade in */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Slide in from left */
+@keyframes slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Utility classes */
+
+.animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(0, 242, 148, 0.02) 45%,
+            rgba(0, 242, 148, 0.05) 50%,
+            rgba(0, 242, 148, 0.02) 55%,
+            transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 4s linear infinite;
+}
+
+/* Stagger delays */
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.delay-4 {
+    animation-delay: 0.4s;
+}
+
+.delay-5 {
+    animation-delay: 0.5s;
+}

@@ -1,0 +1,65 @@
+# ============================================
+# CDC Service Request System - Docker Compose
+# ============================================
+# Usage:
+#   docker compose up --build        (start everything)
+#   docker compose up --build -d     (start in background)
+#   docker compose down              (stop everything)
+#   docker compose logs -f           (view logs)
+# ============================================
+
+services:
+  # ─── Backend API ────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cdc-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/dev.db
+      - JWT_SECRET=super-secret-key-cdc
+    volumes:
+      # Persist SQLite database in a separate dir to avoid hiding migrations
+      - backend-data:/app/data
+      # Persist uploaded files
+      - backend-uploads:/app/uploads
+    networks:
+      - cdc-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Frontend (Nginx) ──────────────────────
+  frontend:
+    build:
+      context: ./fronend
+      dockerfile: Dockerfile
+    container_name: cdc-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cdc-network
+
+# ─── Volumes (Persistent Storage) ────────────
+volumes:
+  backend-data:
+    driver: local
+  backend-uploads:
+    driver: local
+
+# ─── Network ─────────────────────────────────
+networks:
+  cdc-network:
+    driver: bridge
