@@ -7,46 +7,28 @@ async function main() {
     console.log('🌱 Seeding database...');
 
     const hashedPassword = await bcrypt.hash('admin123', 10);
-    const userPassword = await bcrypt.hash('user123', 10);
 
-    // 1. Create Departments
-    const finance = await prisma.department.upsert({
-        where: { code: 'FIN' },
+    // 1. Create Department
+    const hopss = await prisma.department.upsert({
+        where: { code: 'HOPSS' },
         update: {},
-        create: { code: 'FIN', name: 'FINANCE & ACCOUNTS' }
+        create: { code: 'HOPSS', name: 'HOSPITAL OPERATIONS AND PATIENT SUPPORT SERVICE' }
     });
 
-    const admin = await prisma.department.upsert({
-        where: { code: 'ADM' },
-        update: {},
-        create: { code: 'ADM', name: 'ADMINISTRATION' }
-    });
-
-    // 2. Create Sections
-    const accountsPayable = await prisma.section.upsert({
+    // 2. Create Section
+    const efm = await prisma.section.upsert({
         where: {
             name_departmentId: {
-                name: 'ACCOUNTS PAYABLE',
-                departmentId: finance.id
+                name: 'ENGINEERING AND FACILITIES MANAGEMENT',
+                departmentId: hopss.id
             }
         },
         update: {},
-        create: { name: 'ACCOUNTS PAYABLE', departmentId: finance.id }
-    });
-
-    const hr = await prisma.section.upsert({
-        where: {
-            name_departmentId: {
-                name: 'HUMAN RESOURCES',
-                departmentId: admin.id
-            }
-        },
-        update: {},
-        create: { name: 'HUMAN RESOURCES', departmentId: admin.id }
+        create: { name: 'ENGINEERING AND FACILITIES MANAGEMENT', departmentId: hopss.id }
     });
 
     // 3. Create Request Types
-    const itSupport = await prisma.requestType.upsert({
+    await prisma.requestType.upsert({
         where: { name: 'IT SUPPORT' },
         update: {},
         create: { name: 'IT SUPPORT' }
@@ -68,35 +50,7 @@ async function main() {
             password: hashedPassword,
             role: 'ADMIN',
             status: 'ACTIVE',
-            sectionId: hr.id
-        }
-    });
-
-    // 5. Create Sample User
-    await prisma.user.upsert({
-        where: { email: 'user@cdh.gov' },
-        update: {},
-        create: {
-            name: 'REGULAR USER',
-            email: 'user@cdh.gov',
-            password: userPassword,
-            role: 'USER',
-            status: 'ACTIVE',
-            sectionId: accountsPayable.id
-        }
-    });
-
-    // 6. Create Sample Technical Staff
-    await prisma.user.upsert({
-        where: { email: 'tech@cdh.gov' },
-        update: {},
-        create: {
-            name: 'TECH SUPPORT',
-            email: 'tech@cdh.gov',
-            password: userPassword,
-            role: 'TECHNICAL',
-            status: 'ACTIVE',
-            sectionId: hr.id
+            sectionId: efm.id
         }
     });
 
