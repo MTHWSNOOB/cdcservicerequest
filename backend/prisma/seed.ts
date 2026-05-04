@@ -86,6 +86,20 @@ async function main() {
         }
     });
 
+    // 6. Create Sample Technical Staff
+    await prisma.user.upsert({
+        where: { email: 'tech@cdh.gov' },
+        update: {},
+        create: {
+            name: 'TECH SUPPORT',
+            email: 'tech@cdh.gov',
+            password: userPassword,
+            role: 'TECHNICAL',
+            status: 'ACTIVE',
+            sectionId: hr.id
+        }
+    });
+
     console.log('✅ Seeding complete!');
 }
 

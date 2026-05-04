@@ -58,9 +58,6 @@ const toggleSidebar = () => {
 
 onMounted(() => {
   adminStore.initialize()
-  if (authStore.isAdmin) {
-    userStore.fetchUsers()
-  }
   requestStore.fetchRequests()
   notificationStore.startPolling()
 })

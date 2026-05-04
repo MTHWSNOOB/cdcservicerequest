@@ -162,10 +162,10 @@
         </div>
 
         <div class="input-group mb-16 relative">
-          <label class="cad-label">Assigned Admin(s)</label>
+          <label class="cad-label">Assigned Technical Staff</label>
           <div class="multi-select-container">
             <div class="cad-select multi-select-display" @click="isDropdownOpen = !isDropdownOpen">
-              <span v-if="form.assignedAdmins.length === 0" class="text-muted">-- Select Assigned Admin(s) --</span>
+              <span v-if="form.assignedAdmins.length === 0" class="text-muted">-- Select Technical Staff --</span>
               <span v-else>{{ form.assignedAdmins.join(', ') }}</span>
               <ChevronDown :size="14" class="dropdown-icon" />
             </div>
@@ -174,7 +174,7 @@
               <label v-for="admin in adminUsers" :key="admin.id" class="admin-checkbox">
                 <input type="checkbox" :value="admin.name" v-model="form.assignedAdmins" />
                 <div class="checkbox-ui"></div>
-                <span class="checkbox-label">{{ admin.name }}</span>
+                <span class="checkbox-label">{{ admin.name }} ({{ admin.role }})</span>
               </label>
             </div>
           </div>
@@ -200,7 +200,7 @@
         <h4 class="font-display text-primary-glow mb-16">Progress & Resolution</h4>
         
         <div class="info-item mb-16">
-          <span class="info-label">Assigned To</span>
+          <span class="info-label">Assigned Staff</span>
           <span class="info-value">{{ request.assignedAdmins || 'Pending assignment...' }}</span>
         </div>
 
@@ -259,9 +259,10 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import BaseModal from '../../components/BaseModal.vue'
 import QrcodeVue from 'qrcode.vue'
+import { useUserStore } from '../../stores/userStore'
 import { useAdminStore } from '../../stores/adminStore'
 import { useRequestStore } from '../../stores/requestStore'
 import { useAuthStore } from '../../stores/authStore'
@@ -275,12 +276,24 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'updated'])
 
+const userStore = useUserStore()
 const adminStore = useAdminStore()
 const requestStore = useRequestStore()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 
-const adminUsers = computed(() => adminStore.users ? adminStore.users.filter(u => u.role === 'ADMIN') : [])
+const adminUsers = computed(() => {
+  return userStore.users.filter(u => 
+    u.role?.toUpperCase() === 'ADMIN' || 
+    u.role?.toUpperCase() === 'TECHNICAL'
+  )
+})
+
+onMounted(async () => {
+  if (authStore.isAdmin && userStore.users.length === 0) {
+    await userStore.fetchUsers()
+  }
+})
 const saving = ref(false)
 const statusChanging = ref(false)
 const isDisapproving = ref(false)

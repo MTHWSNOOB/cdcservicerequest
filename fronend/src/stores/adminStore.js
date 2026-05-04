@@ -175,12 +175,13 @@ export const useAdminStore = defineStore('admin', () => {
     // Initialize all lookup data
     async function initialize() {
         const authStore = (await import('./authStore')).useAuthStore()
+        const userStore = (await import('./userStore')).useUserStore()
 
         await Promise.all([
             fetchDepartments(),
             fetchSections(),
             fetchRequestTypes(),
-            authStore.isAdmin ? fetchUsers() : Promise.resolve()
+            authStore.isAdmin ? userStore.fetchUsers() : Promise.resolve()
         ])
     }
 
